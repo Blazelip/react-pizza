@@ -1,0 +1,45 @@
+.root {
+  position: relative;
+}
+
+.input {
+  border: 1px solid rgba(0, 0 , 0, 0.1);
+  padding: 8px 15px;
+  padding-left: 30px;
+  padding-right: 20px;
+  outline: none;
+  width: 250px;
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  &:focus {
+    border: 1px solid rgba(0, 0 , 0, 0.3);
+  }
+}
+
+.search {
+  width: 15px;
+  height: 15px;
+  opacity: 0.3;
+
+  position: absolute;
+  left: 10px;
+  top: 12px;
+}
+
+.closeCross {
+  position: absolute;
+  right: 10px;
+  top: 14px;
+
+  width: 12px;
+  height: 12px;
+
+  opacity: 0.3;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
