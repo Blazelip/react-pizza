@@ -49,6 +49,7 @@ const filterSlice = createSlice({
         state.sort = action.payload.sort;
         state.currentPage = Number(action.payload.currentPage);
         state.filter = Number(action.payload.filterId);
+        state.search = action.payload.searchValue;
       } else {
         state.sort = {
           value: 'rating',
@@ -56,6 +57,7 @@ const filterSlice = createSlice({
         }
         state.currentPage = 1;
         state.filter = 0;
+        state.search = '';
       }
     }
   }

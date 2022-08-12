@@ -20,6 +20,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isMounted = React.useRef(false);
+  const isSearch = React.useRef(false);
 
   const filterId = useSelector(filterSelector);
   const sortProp = useSelector((state: RootState) => state.filter.sort);
@@ -37,34 +38,6 @@ const Home: React.FC = () => {
     dispatch(setCurrentPage(number));
   };
 
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify({
-        sort,
-        filterId,
-        currentPage,
-        order: order ? 'asc' : 'desc',
-      })
-      
-      navigate(`?${queryString}`); 
-    }
-    isMounted.current = true;
-  }, [filterId, sort, currentPage, order]);
-
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      
-      const sort = sortTypes.find((item: any) => item.value = params.sort)
-      const order = params.order === 'desc' ? false : true;
-      dispatch(setQueryFilters({
-        ...params,
-        order,
-        sort,
-      }))
-    }
-  }, []);
-
   const getPizzas = async () => {
     const filterQuery = filterId > 0 ? `category=${filterId}` : '';
     const searchQuery = searchValue ? `&search=${searchValue}` : '';
@@ -81,9 +54,45 @@ const Home: React.FC = () => {
     window.scrollTo(0, 0);
   };
 
+  // Pare query string and set redux parameters
   React.useEffect(() => {
-    getPizzas();
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+      
+      const sort = sortTypes.find((item: any) => item.value = params.sort)
+      const order = params.order === 'desc' ? false : true;
+      dispatch(setQueryFilters({
+        ...params,
+        order,
+        sort,
+      }))
+      isSearch.current = true;
+    }
   }, []);
+
+  // Generate and past query string from filters
+  React.useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sort,
+        filterId,
+        currentPage,
+        order: order ? 'asc' : 'desc',
+        searchValue
+      })
+      
+      navigate(`?${queryString}`); 
+    }
+    isMounted.current = true;
+  }, [filterId, sort, currentPage, order, searchValue]);
+
+  React.useEffect(() => {
+    if (!isSearch.current) {
+      getPizzas();
+    }
+
+    isSearch.current = false;
+  }, [filterId, sort, currentPage, order, searchValue]);
 
   const filteredPizzas = items.map((pizza: any) => <PizzaItem key={pizza.id} {...pizza} />);
   const skeletons = [...new Array(6)].map((_, index) => <Placeholder key={index} />);
